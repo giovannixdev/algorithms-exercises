@@ -24,16 +24,75 @@
 */
 
 class LinkedList {
-  // code goes here
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+
+  push(value) {
+    const node = new Node(value);
+    // console.log("node", node);
+    this.length++;
+
+    if (!this.head) {
+      this.head = node;
+      // this.tail = node
+    } else {
+      this.tail.next = node;
+      console.log("tail", this.tail);
+      console.log("tail.next", this.tail.next);
+    }
+    // this.length++;
+    this.tail = node;
+  }
+
+  pop() {
+    return this.delete(this.length - 1);
+  }
+
+  _find(index) {
+    if (index >= this.length) return null;
+    let current = this.head;
+    for (let i = 0; i < index; i++) {
+      current = current.next;
+    }
+    return current;
+  }
+
+  get(index) {
+    const node = this._find(index);
+    if (!node) return void 0;
+    return node.data;
+  }
+
+  delete(index) {
+    const currentNode = this._find(index);
+    if (!this.head) return void 0;
+    if (this.head === this.tail) {
+      this.head = this.tail = null;
+    } else if (currentNode === this.head) {
+      this.head = currentNode.next;
+    } else {
+      let previousNode = this._find(index - 1);
+      if (currentNode === this.tail) this.tail = previousNode;
+      previousNode.next = currentNode.next;
+    }
+    this.length--;
+    return currentNode.data;
+  }
 }
 
 class Node {
-  // code goes here
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("LinkedList", function () {
+describe("LinkedList", function () {
   const range = (length) =>
     Array.apply(null, { length: length }).map(Number.call, Number);
   const abcRange = (length) =>
@@ -66,11 +125,13 @@ describe.skip("LinkedList", function () {
     expect(list.get(0)).toEqual("first");
     list.push("second");
     expect(list.get(1)).toEqual("second");
+
     expect(list.get(0)).toEqual("first");
     abcRange(26).map((character) => list.push(character));
     expect(list.get(27)).toEqual("z");
     expect(list.get(0)).toEqual("first");
     expect(list.get(9)).toEqual("h");
+    // This will pop z
     list.pop();
     expect(list.get(list.length - 1)).toEqual("y");
   });
